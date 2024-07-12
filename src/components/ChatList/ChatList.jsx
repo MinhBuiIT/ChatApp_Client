@@ -50,11 +50,9 @@ const ChatList = () => {
     toast.info(data.message);
   };
   const handleOnlineUser = (data) => {
-    console.log('online', data);
     dispatch(addUserOnline(data.onlineUser));
   };
   const handleOfflineUser = (data) => {
-    console.log('offline', data);
     dispatch(removeUserOnline(data));
   };
   const socket = getSocketContext();

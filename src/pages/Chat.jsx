@@ -1,8 +1,10 @@
 import FileIcon from '@mui/icons-material/AttachFile';
+import InsertEmoticonOutlinedIcon from '@mui/icons-material/InsertEmoticonOutlined';
 import SendOutlined from '@mui/icons-material/SendOutlined';
-import { Avatar, Box, CircularProgress, Drawer, Skeleton, Stack, Typography } from '@mui/material';
+import { Avatar, Box, CircularProgress, Drawer, Menu, Skeleton, Stack, Typography } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import Picker from 'emoji-picker-react';
 import { motion } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,7 +44,12 @@ const Chat = () => {
   const anchorElFile = useRef(null);
   const observer = useRef();
   const typingTimeOut = useRef(null);
+  const emojiRef = useRef(null);
+  const [showPicker, setShowPicker] = useState(false);
 
+  const onEmojiClick = (emojiObject) => {
+    setSendMessage((prevInput) => prevInput + emojiObject.emoji);
+  };
   //Reset when change chat
   useEffect(() => {
     return () => {
@@ -286,6 +293,36 @@ const Chat = () => {
                 value={sendMessage}
                 onChange={onChangeSendMessage}
               />
+              <Menu
+                id="demo-positioned-menu"
+                aria-labelledby="demo-positioned-button"
+                anchorEl={emojiRef.current}
+                open={showPicker}
+                onClose={() => setShowPicker(false)}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left'
+                }}
+              >
+                <Picker pickerStyle={{ width: '100%' }} onEmojiClick={onEmojiClick} />
+              </Menu>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: '10px',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setShowPicker(!showPicker)}
+                ref={emojiRef}
+              >
+                <InsertEmoticonOutlinedIcon />
+              </Box>
               <Box
                 ref={anchorElFile}
                 onClick={() => dispatch(hanldeIsOpenMenuFile(true))}
@@ -302,6 +339,7 @@ const Chat = () => {
               >
                 <FileIcon sx={{ color: grey[600] }} />
               </Box>
+
               <MenuFile chatId={chatId} anchorElFile={anchorElFile} />
               <IconButtonSendCustom sx={{ width: '35px', height: '35px' }} type="submit">
                 <SendOutlined sx={{ transform: 'rotate(-25deg)', width: '20px' }} />
